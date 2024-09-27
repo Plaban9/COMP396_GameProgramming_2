@@ -34,11 +34,11 @@ public class DiceGame : MonoBehaviour
                 }
                 if (diceResult == inputInteger)
                 {
-                    outputText.text = $"DICE RESULT: {diceResult} \r\nYOU WIN!";
+                    outputText.text = $"DICE RESULT: {diceResult} \r\n<color=#00FF00>YOU WIN!</color>";
                 }
                 else
                 {
-                    outputText.text = $"DICE RESULT: {diceResult} \r\nYOU LOSE!";
+                    outputText.text = $"DICE RESULT: {diceResult} \r\n<color=#FF0000>YOU LOSE!</color>";
                 }
             }
             Debug.Log($"Total of six: {totalSix}");

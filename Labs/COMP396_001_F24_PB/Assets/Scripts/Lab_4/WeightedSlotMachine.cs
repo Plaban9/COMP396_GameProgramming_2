@@ -171,8 +171,7 @@ public class WeightedSlotMachine : MonoBehaviour
                 thirdReel.text = randomSpinResult.ToString();
                 if (elapsedTime >= spinDuration)
                 {
-                    if ((firstReelResult == secondReelResult) &&
-                        randomSpinResult != firstReelResult)
+                    if ((firstReelResult == secondReelResult) && randomSpinResult != firstReelResult)
                     {
                         //the first two reels have resulted the same symbol
                         //but unfortunately the third reel missed
@@ -180,13 +179,24 @@ public class WeightedSlotMachine : MonoBehaviour
 
                         randomSpinResult = firstReelResult - 1;
                         if (randomSpinResult < firstReelResult)
+                        {
                             randomSpinResult = firstReelResult - 1;
+                        }
+
                         if (randomSpinResult > firstReelResult)
+                        {
                             randomSpinResult = firstReelResult + 1;
+                        }
+
                         if (randomSpinResult < 0)
+                        {
                             randomSpinResult = 0;
+                        }
+
                         if (randomSpinResult > 9)
+                        {
                             randomSpinResult = 9;
+                        }
 
                         thirdReel.text = randomSpinResult.ToString();
                         thirdReelResult = randomSpinResult;

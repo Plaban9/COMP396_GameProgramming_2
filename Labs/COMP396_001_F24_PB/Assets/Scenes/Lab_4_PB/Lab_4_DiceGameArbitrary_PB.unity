@@ -1301,7 +1301,7 @@ GameObject:
   - component: {fileID: 1820001503}
   - component: {fileID: 1820001504}
   m_Layer: 5
-  m_Name: DiceGame
+  m_Name: DiceGameArbitrary
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

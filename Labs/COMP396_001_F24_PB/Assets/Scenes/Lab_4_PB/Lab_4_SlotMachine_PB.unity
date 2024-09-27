@@ -637,8 +637,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1943185638}
-        m_TargetAssemblyTypeName: WeightedSlotMachine, Assembly-CSharp
+      - m_Target: {fileID: 1943185636}
+        m_TargetAssemblyTypeName: SlotMachine, Assembly-CSharp
         m_MethodName: Spin
         m_Mode: 1
         m_Arguments:
@@ -1482,7 +1482,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: WEIGHTED SLOT MACHINE!
+  m_text: SLOT MACHINE!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2441,7 +2441,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1
+  m_text: 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 79459efec17a4d00a321bdcc27bbc385, type: 2}
@@ -2575,7 +2575,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1
+  m_text: 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 79459efec17a4d00a321bdcc27bbc385, type: 2}
@@ -3106,7 +3106,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1
+  m_text: 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 79459efec17a4d00a321bdcc27bbc385, type: 2}
@@ -3330,7 +3330,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1943185637}
   - component: {fileID: 1943185636}
-  - component: {fileID: 1943185638}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -3345,7 +3344,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1943185635}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 29f5a9b1cf02dd142b9ed2194bae7c19, type: 3}
   m_Name: 
@@ -3377,33 +3376,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1943185638
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1943185635}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1022d8a1baf94b74aabe547711999390, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spinDuration: 2
-  numberOfSym: 10
-  firstReel: {fileID: 959237206}
-  secondReel: {fileID: 950387519}
-  thirdReel: {fileID: 1715422282}
-  betResult: {fileID: 740336441}
-  totalCredits: {fileID: 640713713}
-  inputBet: {fileID: 851001339}
-  _background: {fileID: 1019584353}
-  _slotMachine: {fileID: 1947272411}
-  _gameOver: {fileID: 95439087}
-  _gameOverColor: {r: 1, g: 0, b: 0, a: 0.19607843}
-  weightedReelPoll:
-  - number: 1
-    weight: 90
 --- !u!1 &1947272411
 GameObject:
   m_ObjectHideFlags: 0

@@ -1241,7 +1241,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1820001504}
-        m_TargetAssemblyTypeName: DiceGame, Assembly-CSharp
+        m_TargetAssemblyTypeName: DiceGameLoaded, Assembly-CSharp
         m_MethodName: ProcessGame
         m_Mode: 1
         m_Arguments:
@@ -1301,7 +1301,7 @@ GameObject:
   - component: {fileID: 1820001503}
   - component: {fileID: 1820001504}
   m_Layer: 5
-  m_Name: DiceGame
+  m_Name: DiceGameLoaded
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1336,7 +1336,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1820001502}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 775364729ec24244d8f7ce65a1c0f076, type: 3}
+  m_Script: {fileID: 11500000, guid: 1a19a88420ad4704aba21c2ca5521ce8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   inputValue: 1
