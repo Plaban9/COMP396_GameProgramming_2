@@ -19,6 +19,9 @@ namespace AI.Simple_FSM
             CHASE,
             ATTACK,
             SEARCH,
+            DRINK,
+            INTERACT_WITH_NPC,
+            INSPECT_EQUIPMENT,
             ESCAPE,
             WAIT
         };
@@ -69,6 +72,20 @@ namespace AI.Simple_FSM
         [Header("WAIT")]
         private float _startWaitTime;
         [SerializeField] private float _waitTimerInSecs = 20f;
+
+        [Header("DRINK")]
+        [SerializeField] private Transform _drinkRestWaypoint;
+        [SerializeField] private float _drinkSpeed = 5f;
+        [SerializeField] private float _drinkDuration = 5f;
+
+        [Header("INTERACT_WITH_NPC")]
+        [SerializeField] private Vector3 _interactTransform;
+        [SerializeField] private float _interactSpeed = 5f;
+        [SerializeField] private float _interactDuration = 5f;
+        [SerializeField] private float _interactRadius = 5f;
+
+        [Header("INSPECT_EQUIPMENT")]
+        [SerializeField] private float _inspectDuration = 5f;
 
         [Header("DEBUG/TEST")]
         [SerializeField] private int _playerLevel = 10;
@@ -130,6 +147,18 @@ namespace AI.Simple_FSM
 
                 case NPC_STATE_PB.HOWL:
                     HandleHowlState();
+                    break;
+
+                case NPC_STATE_PB.DRINK:
+                    HandleDrinkState();
+                    break;
+
+                case NPC_STATE_PB.INTERACT_WITH_NPC:
+                    HandleInteractWithNPCState();
+                    break;
+
+                case NPC_STATE_PB.INSPECT_EQUIPMENT:
+                    HandleInspectEquipmentState();
                     break;
             }
         }
@@ -424,6 +453,26 @@ namespace AI.Simple_FSM
             }
         }
         #endregion
+
+        #region DRINK
+        public void HandleDrinkState()
+        {
+        }
+        #endregion
+
+        #region INTERACT_WITH_NPC
+        public void HandleInteractWithNPCState()
+        {
+        }
+        #endregion
+
+        #region INSPECT_EQUIPMENT
+        public void HandleInspectEquipmentState()
+        {
+        }
+        #endregion
+
+
         #endregion
     }
 }
