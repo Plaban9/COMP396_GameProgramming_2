@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController_Lab_5 : MonoBehaviour
 {
     [SerializeField] private float _speed;
     [SerializeField] private int _horizontal = 0;
