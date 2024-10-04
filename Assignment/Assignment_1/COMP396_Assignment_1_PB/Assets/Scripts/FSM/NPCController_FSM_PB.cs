@@ -100,11 +100,14 @@ namespace AI.Simple_FSM
 
         [Header("INTERACT_WITH_NPC")]
         [SerializeField] private GameObject[] _otherNpc;
-        [SerializeField] private GameObject _interactableNpc;
+        private GameObject _interactableNpc;
         [SerializeField] private Vector3 _interactPosition;
         [SerializeField] private float _interactSpeed = 5f;
         [SerializeField] private float _interactDurationInSecs = 5f;
         [SerializeField] private float _interactRadius = 5f;
+        [SerializeField] private bool _isTheInteractionStarter = false;
+        [SerializeField] private bool _isInInteraction = false;
+        private float _interactionTimer;
 
         [Header("INSPECT_EQUIPMENT")]
         [SerializeField] private float _inspectDurationInSecs = 5f;
@@ -184,7 +187,7 @@ namespace AI.Simple_FSM
                     break;
 
                 case NPC_STATE_PB.INTERACT_WITH_NPC:
-                    HandleInteractWithNPCState();
+                    HandleInteractionWithNPCState();
                     break;
 
                 case NPC_STATE_PB.INSPECT_EQUIPMENT:
@@ -206,10 +209,16 @@ namespace AI.Simple_FSM
 
         private void OnDrawGizmos()
         {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, _viewDistance);
+
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, _attackDistanceThreshold);
 
-            Gizmos.color = gameObject.name.Contains("Coward") ? Color.white : Color.magenta;
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(transform.position, _escapeDistanceThreshold);
+
+            Gizmos.color = gameObject.name.Contains("Coward") ? Color.cyan : Color.magenta;
             Gizmos.DrawWireSphere(transform.position, _howlRadius);
         }
 
@@ -442,7 +451,7 @@ namespace AI.Simple_FSM
 
             foreach (var npc in npcs)
             {
-                if (npc.TryGetComponent(out NPCController_Factory_PB npc_ai))
+                if (npc.TryGetComponent(out NPCController_FSM_PB npc_ai))
                 {
                     npc_ai.OnHowlNotified(gameObject, _playerLastKnownPosition);
                 }
@@ -497,51 +506,139 @@ namespace AI.Simple_FSM
         #endregion
 
         #region INTERACT_WITH_NPC
-        private void HandleInteractWithNPCState()
+        private void HandleInteractionWithNPCState()
         {
-            if (_interactableNpc == null)
+            if (IsPlayerWithinSight())
             {
-                SetSpeed(_patrolSpeed);
-                SetState(NPC_STATE_PB.PATROL);
+                _detectedTime = Time.time;
+                SetState(NPC_STATE_PB.SUSPICIOUS);
                 return;
+            }
+
+            if (_interactableNpc != null)
+            {
+                if (TravelToWaypoint(_interactPosition) && !_isInInteraction)
+                {
+                    if (Vector3.Distance(transform.position, _interactableNpc.transform.position) < _interactRadius * 2 && !_isInInteraction && _isTheInteractionStarter)
+                    {
+                        _isInInteraction = true;
+                        _interactionTimer = Time.time;
+
+                        _interactableNpc.GetComponent<NPCController_FSM_PB>().OnNPCInteractionStarted(this.gameObject);
+
+                        return;
+                    }
+                }
+            }
+
+            if (_isInInteraction && _isTheInteractionStarter)
+            {
+                if (_interactDurationInSecs + _interactionTimer < Time.time)
+                {
+                    _interactableNpc.GetComponent<NPCController_FSM_PB>().OnNPCInteractionEndNotified(this.gameObject);
+                    _isTheInteractionStarter = false;
+                    _isInInteraction = false;
+
+                    _interactableNpc = null;
+
+                    SetSpeed(_patrolSpeed);
+                    SetState(NPC_STATE_PB.PATROL);
+                    HandleInitialStateAttributes();
+                }
             }
         }
 
         private void SetupInteractWithNPCState()
         {
-            var npcs = GetNPCsInRange();
+            if (_isTheInteractionStarter)
+            {
+                var npcs = FilterNPCs(GetNPCsInRange(), this.GetComponent<Collider>());
 
-            if (npcs.Length > 0)
-            {
-                _interactableNpc = npcs[Random.Range(0, npcs.Length)].gameObject;
+                D("NPCs: " + npcs.Count);
+
+                if (npcs.Count > 0)
+                {
+                    _interactableNpc = npcs[Random.Range(0, npcs.Count)].gameObject;
+                }
+                else
+                {
+                    _interactableNpc = _otherNpc.Length > 0 ? _otherNpc[Random.Range(0, _otherNpc.Length)] : null;
+                }
+
+                if (_interactableNpc == null)
+                {
+                    SetSpeed(_patrolSpeed);
+                    SetState(NPC_STATE_PB.PATROL);
+                    HandleInitialStateAttributes();
+                    return;
+                }
+
+                _interactPosition = GetMidPointBetweenTwoNPCs(_interactableNpc.transform.position);
+
+                if (_interactableNpc.TryGetComponent(out NPCController_FSM_PB npc_ai))
+                {
+                    npc_ai.OnNPCInteractionStartNotified(gameObject, _interactPosition);
+                }
+                else
+                {
+                    SetSpeed(_patrolSpeed);
+                    SetState(NPC_STATE_PB.PATROL);
+                    HandleInitialStateAttributes();
+                }
             }
-            else
+        }
+
+        private List<Collider> FilterNPCs(Collider[] colliders, Collider colliderToExclude)
+        {
+            var filteredNPCList = new List<Collider>();
+
+            for (int i = 0; i < colliders.Length; i++)
             {
-                _interactableNpc = _otherNpc[Random.Range(0, _otherNpc.Length)];
+                if (colliderToExclude == colliders[i])
+                {
+                    continue;
+                }
+
+                filteredNPCList.Add(colliders[i]);
             }
+
+            return filteredNPCList;
         }
 
         public void OnNPCInteractionStartNotified(GameObject gameObject, Vector3 interactPosition)
         {
             D($"NPC Notified for interaction start notified by {gameObject.name}");
 
+            _interactPosition = interactPosition;
+            _interactableNpc = gameObject;
             SetSpeed(_interactSpeed);
             SetState(NPC_STATE_PB.INTERACT_WITH_NPC);
         }
 
-        public void OnNPCInteractionEndNotified(GameObject gameObject, Vector3 interactPosition)
+        public void OnNPCInteractionStarted(GameObject gameObject)
+        {
+            D($"NPC Notified for interaction started by {gameObject.name}");
+
+            _isInInteraction = true;
+        }
+
+        public void OnNPCInteractionEndNotified(GameObject gameObject)
         {
             D($"NPC Notified for interaction end notified by {gameObject.name}");
 
+            _isInInteraction = false;
             SetSpeed(_patrolSpeed);
             SetState(NPC_STATE_PB.PATROL);
             HandleInitialStateAttributes();
         }
 
-        private Vector3 GetMidPointBetweenTwoNPCs()
+        private Vector3 GetMidPointBetweenTwoNPCs(Vector3 npcPosition)
         {
-            //TODO
-            return new Vector3();
+            var x_diff = (npcPosition.x - this.transform.position.x) / 2f;
+            var y_diff = (npcPosition.y - this.transform.position.y) / 2f;
+            var z_diff = (npcPosition.z - this.transform.position.z) / 2f;
+
+            return new Vector3(this.transform.position.x + x_diff, this.transform.position.y + y_diff, this.transform.position.z + z_diff);
         }
         #endregion
 
@@ -607,6 +704,11 @@ namespace AI.Simple_FSM
 
                     if (randomState != null && randomState.state != GetState())
                     {
+                        if (randomState.state == NPC_STATE_PB.INTERACT_WITH_NPC)
+                        {
+                            _isTheInteractionStarter = true;
+                        }
+
                         HandleRandomInitialStateAttributes(randomState.state);
                         SetSpeed(randomState.speed);
                         SetState(randomState.state);
@@ -665,7 +767,6 @@ namespace AI.Simple_FSM
                 case NPC_STATE_PB.ESCAPE:
                 case NPC_STATE_PB.WAIT:
                     break;
-
             }
         }
 
@@ -713,6 +814,12 @@ namespace AI.Simple_FSM
         {
             transform.position = Vector3.MoveTowards(transform.position, waypoint.position, _currentSpeed * Time.deltaTime);
             return Vector3.Distance(transform.position, waypoint.position) < _waypointProximityThreshold;
+        }
+
+        private bool TravelToWaypoint(Vector3 waypoint)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, waypoint, _currentSpeed * Time.deltaTime);
+            return Vector3.Distance(transform.position, waypoint) < _waypointProximityThreshold;
         }
         #endregion
         #endregion
