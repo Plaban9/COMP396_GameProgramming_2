@@ -1,10 +1,14 @@
 using AI.FactoryDesign;
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+
+using Unity.VisualScripting;
 
 using UnityEngine;
+
+using Random = UnityEngine.Random;
 
 namespace AI.Simple_FSM
 {
@@ -19,12 +23,25 @@ namespace AI.Simple_FSM
             CHASE,
             ATTACK,
             SEARCH,
-            DRINK,
+            REST,
             INTERACT_WITH_NPC,
             INSPECT_EQUIPMENT,
             ESCAPE,
             WAIT
         };
+
+        [Serializable]
+        public class RandomState
+        {
+            public NPC_STATE_PB state;
+            public int weight;
+            public float speed;
+
+            public override string ToString()
+            {
+                return $"State: {state.HumanName()}, Weight: {weight}, Speed: {speed}";
+            }
+        }
 
         [Header("GENERAL ATTRIBUTES")]
         [SerializeField] private NPC_STATE_PB _currentState;
@@ -35,6 +52,7 @@ namespace AI.Simple_FSM
         [SerializeField] private float _viewAngleInDegrees = 45f; // i.e; from centre of vision half of the angle on each side
         [SerializeField] private GameObject _player;
         [SerializeField] private Vector3 _playerLastKnownPosition;
+        [SerializeField] private float _waypointProximityThreshold;
 
         [Header("HOWL")]
         [SerializeField] private float _howlRadius = 35f;
@@ -73,19 +91,30 @@ namespace AI.Simple_FSM
         private float _startWaitTime;
         [SerializeField] private float _waitTimerInSecs = 20f;
 
-        [Header("DRINK")]
-        [SerializeField] private Transform _drinkRestWaypoint;
-        [SerializeField] private float _drinkSpeed = 5f;
-        [SerializeField] private float _drinkDuration = 5f;
+        [Header("REST")]
+        [SerializeField] private Transform _restWaypoint;
+        [SerializeField] private float _restSpeed = 5f;
+        [SerializeField] private float _restDurationInSecs = 5f;
+        private float _restStartTime = 5f;
+        private bool _isResting;
 
         [Header("INTERACT_WITH_NPC")]
-        [SerializeField] private Vector3 _interactTransform;
+        [SerializeField] private GameObject[] _otherNpc;
+        [SerializeField] private GameObject _interactableNpc;
+        [SerializeField] private Vector3 _interactPosition;
         [SerializeField] private float _interactSpeed = 5f;
-        [SerializeField] private float _interactDuration = 5f;
+        [SerializeField] private float _interactDurationInSecs = 5f;
         [SerializeField] private float _interactRadius = 5f;
 
         [Header("INSPECT_EQUIPMENT")]
-        [SerializeField] private float _inspectDuration = 5f;
+        [SerializeField] private float _inspectDurationInSecs = 5f;
+        private float _inspectStartTimer;
+
+        [Header("RANDOM_WEIGHTED_STATES")]
+        [SerializeField] private List<RandomState> _randomStates;
+        [SerializeField] private float _randomStateTransitionDurationInSecs = 5f;
+        private float _lastRandomWeightDecisionTime;
+        private int _totalRandomWeight;
 
         [Header("DEBUG/TEST")]
         [SerializeField] private int _playerLevel = 10;
@@ -93,6 +122,7 @@ namespace AI.Simple_FSM
 
         private void Start()
         {
+            _lastRandomWeightDecisionTime = Time.time;
             SetSpeed(_patrolSpeed);
             SetState(NPC_STATE_PB.PATROL);
         }
@@ -149,8 +179,8 @@ namespace AI.Simple_FSM
                     HandleHowlState();
                     break;
 
-                case NPC_STATE_PB.DRINK:
-                    HandleDrinkState();
+                case NPC_STATE_PB.REST:
+                    HandleRestState();
                     break;
 
                 case NPC_STATE_PB.INTERACT_WITH_NPC:
@@ -161,27 +191,6 @@ namespace AI.Simple_FSM
                     HandleInspectEquipmentState();
                     break;
             }
-        }
-
-        private void SetSpeed(float speed)
-        {
-            _currentSpeed = speed;
-        }
-
-        private void SetState(NPC_STATE_PB stateToSet)
-        {
-            D($"Setting State: {stateToSet}");
-            _currentState = stateToSet;
-        }
-
-        public NPC_STATE_PB GetState()
-        {
-            return _currentState;
-        }
-
-        public bool CheckState(NPC_STATE_PB stateToCheck)
-        {
-            return stateToCheck == _currentState;
         }
 
         private void D(string message, bool isError = false)
@@ -197,23 +206,23 @@ namespace AI.Simple_FSM
 
         private void OnDrawGizmos()
         {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, _attackDistanceThreshold);
 
             Gizmos.color = gameObject.name.Contains("Coward") ? Color.white : Color.magenta;
             Gizmos.DrawWireSphere(transform.position, _howlRadius);
         }
-
-        #region Helpers
-        private bool IsPlayerWithinSight()
-        {
-            return Vector3.Distance(transform.position, _player.transform.position) < _viewDistance;
-        }
-        #endregion
 
         #region STATE HANDLERS
         #region PATROL
         private void HandlePatrolState()
         {
             FollowPath();
+
+            if (HandleRandomStates())
+            {
+                return;
+            }
 
             if (IsPlayerWithinSight())
             {
@@ -224,7 +233,7 @@ namespace AI.Simple_FSM
 
         private void FollowPath()
         {
-            if (Vector3.Distance(transform.position, _waypoints[_targetWaypointIndex].position) < 1.5f)
+            if (Vector3.Distance(transform.position, _waypoints[_targetWaypointIndex].position) < _waypointProximityThreshold)
             {
                 _targetWaypointIndex = (_targetWaypointIndex + 1) % _waypoints.Length;
             }
@@ -429,7 +438,7 @@ namespace AI.Simple_FSM
         #region HOWL
         private void HandleHowlState()
         {
-            var npcs = Physics.OverlapSphere(transform.position, _howlRadius, _layerToHowl);
+            var npcs = GetNPCsInRange();
 
             foreach (var npc in npcs)
             {
@@ -454,25 +463,258 @@ namespace AI.Simple_FSM
         }
         #endregion
 
-        #region DRINK
-        public void HandleDrinkState()
+        #region REST
+        public void HandleRestState()
         {
+            if (IsPlayerWithinSight())
+            {
+                _detectedTime = Time.time;
+                SetState(NPC_STATE_PB.SUSPICIOUS);
+                return;
+            }
+
+            if (TravelToWaypoint(_restWaypoint) && !_isResting)
+            {
+                _restStartTime = Time.time;
+                _isResting = true;
+
+                D("Started Rest");
+
+                return;
+            }
+
+            if (_restDurationInSecs + _restStartTime < Time.time && _isResting)
+            {
+                D("Ended Rest");
+
+                _isResting = false;
+                _lastRandomWeightDecisionTime = Time.time;
+
+                SetSpeed(_patrolSpeed);
+                SetState(NPC_STATE_PB.PATROL);
+            }
         }
         #endregion
 
         #region INTERACT_WITH_NPC
-        public void HandleInteractWithNPCState()
+        private void HandleInteractWithNPCState()
         {
+            if (_interactableNpc == null)
+            {
+                SetSpeed(_patrolSpeed);
+                SetState(NPC_STATE_PB.PATROL);
+                return;
+            }
+        }
+
+        private void SetupInteractWithNPCState()
+        {
+            var npcs = GetNPCsInRange();
+
+            if (npcs.Length > 0)
+            {
+                _interactableNpc = npcs[Random.Range(0, npcs.Length)].gameObject;
+            }
+            else
+            {
+                _interactableNpc = _otherNpc[Random.Range(0, _otherNpc.Length)];
+            }
+        }
+
+        public void OnNPCInteractionStartNotified(GameObject gameObject, Vector3 interactPosition)
+        {
+            D($"NPC Notified for interaction start notified by {gameObject.name}");
+
+            SetSpeed(_interactSpeed);
+            SetState(NPC_STATE_PB.INTERACT_WITH_NPC);
+        }
+
+        public void OnNPCInteractionEndNotified(GameObject gameObject, Vector3 interactPosition)
+        {
+            D($"NPC Notified for interaction end notified by {gameObject.name}");
+
+            SetSpeed(_patrolSpeed);
+            SetState(NPC_STATE_PB.PATROL);
+            HandleInitialStateAttributes();
+        }
+
+        private Vector3 GetMidPointBetweenTwoNPCs()
+        {
+            //TODO
+            return new Vector3();
         }
         #endregion
 
         #region INSPECT_EQUIPMENT
         public void HandleInspectEquipmentState()
         {
+            if (IsPlayerWithinSight())
+            {
+                _detectedTime = Time.time;
+                SetState(NPC_STATE_PB.SUSPICIOUS);
+                return;
+            }
+
+            if (_inspectDurationInSecs + _inspectStartTimer < Time.time)
+            {
+                D("Ended Weapon Inspection");
+
+                _lastRandomWeightDecisionTime = Time.time;
+
+                SetSpeed(_patrolSpeed);
+                SetState(NPC_STATE_PB.PATROL);
+            }
         }
         #endregion
 
+        #region Helpers
+        private void SetSpeed(float speed)
+        {
+            _currentSpeed = speed;
+        }
 
+        private void SetState(NPC_STATE_PB stateToSet)
+        {
+            D($"Setting State: {stateToSet}");
+            _currentState = stateToSet;
+        }
+
+        public NPC_STATE_PB GetState()
+        {
+            return _currentState;
+        }
+
+        public bool CheckState(NPC_STATE_PB stateToCheck)
+        {
+            return stateToCheck == _currentState;
+        }
+
+        private bool HandleRandomStates()
+        {
+            if (_randomStates != null)
+            {
+                if (_lastRandomWeightDecisionTime + _randomStateTransitionDurationInSecs <= Time.time)
+                {
+                    _lastRandomWeightDecisionTime = Time.time;
+                    _totalRandomWeight = _randomStates.Sum(state => state.weight);
+
+                    var randomStateResult = UnityEngine.Random.Range(0, _totalRandomWeight);
+                    var randomState = GetStateBasedOnRandomWeightedPercentage(randomStateResult, _totalRandomWeight);
+
+                    //D($"Total Weight: {_totalRandomWeight}");
+                    //D($"Random State Number: {randomStateResult}");
+                    //D($"Selected State: {randomState}");
+
+                    if (randomState != null && randomState.state != GetState())
+                    {
+                        HandleRandomInitialStateAttributes(randomState.state);
+                        SetSpeed(randomState.speed);
+                        SetState(randomState.state);
+
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private RandomState GetStateBasedOnRandomWeightedPercentage(int randomStateResult, int totalRandomWeight)
+        {
+            var prevRandom = 0;
+
+            for (int i = 0; i < _randomStates.Count; i++)
+            {
+                RandomState randomState = _randomStates[i];
+
+                if (randomStateResult > prevRandom && randomStateResult < randomState.weight + prevRandom)
+                {
+                    return randomState;
+                }
+
+                prevRandom += randomState.weight;
+                //D("Previous Random: " + prevRandom);
+            }
+
+            return null;
+        }
+
+        private void HandleInitialStateAttributes()
+        {
+            switch (_currentState)
+            {
+                case NPC_STATE_PB.INTERACT_WITH_NPC:
+                    SetupInteractWithNPCState();
+                    break;
+
+                case NPC_STATE_PB.INSPECT_EQUIPMENT:
+                    D("Started Weapon Inspection");
+                    _inspectStartTimer = Time.time;
+                    break;
+                case NPC_STATE_PB.PATROL:
+                    _lastRandomWeightDecisionTime = Time.time;
+                    break;
+
+                case NPC_STATE_PB.REST:
+                case NPC_STATE_PB.SUSPICIOUS:
+                case NPC_STATE_PB.HOWL:
+                case NPC_STATE_PB.ALERT:
+                case NPC_STATE_PB.CHASE:
+                case NPC_STATE_PB.ATTACK:
+                case NPC_STATE_PB.SEARCH:
+                case NPC_STATE_PB.ESCAPE:
+                case NPC_STATE_PB.WAIT:
+                    break;
+
+            }
+        }
+
+        private void HandleRandomInitialStateAttributes(NPC_STATE_PB state)
+        {
+            switch (state)
+            {
+                case NPC_STATE_PB.INTERACT_WITH_NPC:
+                    SetupInteractWithNPCState();
+                    break;
+
+                case NPC_STATE_PB.INSPECT_EQUIPMENT:
+                    D("Started Weapon Inspection");
+                    _inspectStartTimer = Time.time;
+                    break;
+                case NPC_STATE_PB.PATROL:
+                    _lastRandomWeightDecisionTime = Time.time;
+                    break;
+
+                case NPC_STATE_PB.REST:
+                case NPC_STATE_PB.SUSPICIOUS:
+                case NPC_STATE_PB.HOWL:
+                case NPC_STATE_PB.ALERT:
+                case NPC_STATE_PB.CHASE:
+                case NPC_STATE_PB.ATTACK:
+                case NPC_STATE_PB.SEARCH:
+                case NPC_STATE_PB.ESCAPE:
+                case NPC_STATE_PB.WAIT:
+                    break;
+
+            }
+        }
+
+        private bool IsPlayerWithinSight()
+        {
+            return Vector3.Distance(transform.position, _player.transform.position) < _viewDistance;
+        }
+
+        private Collider[] GetNPCsInRange()
+        {
+            return Physics.OverlapSphere(transform.position, _howlRadius, _layerToHowl);
+        }
+
+        private bool TravelToWaypoint(Transform waypoint)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, waypoint.position, _currentSpeed * Time.deltaTime);
+            return Vector3.Distance(transform.position, waypoint.position) < _waypointProximityThreshold;
+        }
+        #endregion
         #endregion
     }
 }
