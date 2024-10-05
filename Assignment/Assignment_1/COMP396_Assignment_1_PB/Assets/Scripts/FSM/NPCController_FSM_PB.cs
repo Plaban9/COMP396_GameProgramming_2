@@ -88,8 +88,8 @@ namespace AI.Simple_FSM
         [SerializeField] private float _escapeDistanceThreshold = 70f;
 
         [Header("WAIT")]
-        private float _startWaitTime;
         [SerializeField] private float _waitTimerInSecs = 20f;
+        private float _startWaitTime;
 
         [Header("REST")]
         [SerializeField] private Transform _restWaypoint;

@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 79772254}
   - component: {fileID: 79772253}
   - component: {fileID: 79772252}
-  - component: {fileID: 79772251}
+  - component: {fileID: 79772256}
   m_Layer: 6
   m_Name: NPC_Advanced_Coward_3
   m_TagString: Untagged
@@ -158,77 +158,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 219641170}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &79772251
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 79772249}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16c853b419b029047b280b2163138075, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _currentState: 0
-  _health: 100
-  _level: 15
-  _viewDistance: 10
-  _currentSpeed: 0
-  _viewAngleInDegrees: 45
-  _player: {fileID: 158328505}
-  _playerLastKnownPosition: {x: 0, y: 0, z: 0}
-  _waypointProximityThreshold: 1.5
-  _howlRadius: 13.4
-  _layerToHowl:
-    serializedVersion: 2
-    m_Bits: 64
-  _patrolSpeed: 6
-  _waypoints:
-  - {fileID: 452931498}
-  - {fileID: 122294073}
-  - {fileID: 216405862}
-  - {fileID: 1671742365}
-  _targetWaypointIndex: 0
-  _timeToConfirmInSecs: 1.5
-  _alertSpeed: 5
-  _chaseSpeed: 8
-  _attackDistanceThreshold: 4
-  _attackInterval: 2
-  _searchSpeed: 3
-  _searchDurationInSecs: 5
-  _escapeSpeed: 7
-  _escapeDistanceThreshold: 20
-  _waitTimerInSecs: 5
-  _restWaypoint: {fileID: 633330596}
-  _restSpeed: 5
-  _restDurationInSecs: 5
-  _otherNpc:
-  - {fileID: 1838260325}
-  - {fileID: 1802389492}
-  _interactPosition: {x: 0, y: 0, z: 0}
-  _interactSpeed: 5
-  _interactDurationInSecs: 5
-  _interactRadius: 5
-  _isTheInteractionStarter: 0
-  _isInInteraction: 0
-  _inspectDurationInSecs: 5
-  _randomStates:
-  - state: 7
-    weight: 15
-    speed: 5
-  - state: 9
-    weight: 25
-    speed: 0
-  - state: 8
-    weight: 3
-    speed: 4
-  - state: 0
-    weight: 50
-    speed: 6
-  _randomStateTransitionDurationInSecs: 5
-  _playerLevel: 10
-  _playerHP: 100
 --- !u!54 &79772252
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -329,6 +258,75 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 79772249}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &79772256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 79772249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b99957ed7a1740c41b5353a2f2bcd4c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _currentState: 
+  _health: 100
+  _level: 15
+  _viewDistance: 10
+  _currentSpeed: 0
+  _viewAngleInDegrees: 45
+  _player: {fileID: 158328505}
+  _playerLastKnownPosition: {x: 0, y: 0, z: 0}
+  _waypointProximityThreshold: 1.5
+  _patrolSpeed: 6
+  _waypoints:
+  - {fileID: 122294073}
+  - {fileID: 216405862}
+  - {fileID: 303352499}
+  - {fileID: 1671742365}
+  _targetWaypointIndex: 0
+  _timeToConfirmInSecs: 1.5
+  _alertSpeed: 5
+  _chaseSpeed: 8
+  _attackDistanceThreshold: 4
+  _attackInterval: 2
+  _searchSpeed: 3
+  _searchDurationInSecs: 5
+  _escapeSpeed: 7
+  _escapeDistanceThreshold: 20
+  _waitTimerInSecs: 5
+  _howlRadius: 13.4
+  _layerToHowl:
+    serializedVersion: 2
+    m_Bits: 64
+  _restWaypoint: {fileID: 633330596}
+  _restSpeed: 5
+  _restDurationInSecs: 5
+  _otherNpc: []
+  _interactPosition: {x: 0, y: 0, z: 0}
+  _interactSpeed: 5
+  _interactDurationInSecs: 5
+  _interactRadius: 5
+  _isTheInteractionStarter: 0
+  _isInInteraction: 0
+  _inspectDurationInSecs: 5
+  _randomStates:
+  - state: Rest
+    weight: 15
+    speed: 5
+  - state: Interact_with_NPC
+    weight: 7
+    speed: 0
+  - state: InspectEquipment
+    weight: 20
+    speed: 4
+  - state: Patrol
+    weight: 80
+    speed: 6
+  _randomStateTransitionDurationInSecs: 10
+  _playerLevel: 10
+  _playerHP: 100
 --- !u!1 &122294072
 GameObject:
   m_ObjectHideFlags: 0
@@ -662,6 +660,7 @@ GameObject:
   - component: {fileID: 355667622}
   - component: {fileID: 355667625}
   - component: {fileID: 355667626}
+  - component: {fileID: 355667627}
   m_Layer: 6
   m_Name: NPC_Advanced_Aggresive_1
   m_TagString: Untagged
@@ -791,7 +790,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 355667620}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 16c853b419b029047b280b2163138075, type: 3}
   m_Name: 
@@ -813,8 +812,8 @@ MonoBehaviour:
   _waypoints:
   - {fileID: 122294073}
   - {fileID: 1671742365}
-  - {fileID: 303352499}
   - {fileID: 452931498}
+  - {fileID: 303352499}
   _targetWaypointIndex: 0
   _timeToConfirmInSecs: 1.5
   _alertSpeed: 5
@@ -853,6 +852,76 @@ MonoBehaviour:
     weight: 50
     speed: 6
   _randomStateTransitionDurationInSecs: 5
+  _playerLevel: 10
+  _playerHP: 100
+--- !u!114 &355667627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 355667620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b99957ed7a1740c41b5353a2f2bcd4c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _currentState: 
+  _health: 100
+  _level: 15
+  _viewDistance: 10
+  _currentSpeed: 0
+  _viewAngleInDegrees: 45
+  _player: {fileID: 158328505}
+  _playerLastKnownPosition: {x: 0, y: 0, z: 0}
+  _waypointProximityThreshold: 1.5
+  _patrolSpeed: 6
+  _waypoints:
+  - {fileID: 122294073}
+  - {fileID: 216405862}
+  - {fileID: 303352499}
+  - {fileID: 1671742365}
+  _targetWaypointIndex: 0
+  _timeToConfirmInSecs: 1.5
+  _alertSpeed: 5
+  _chaseSpeed: 8
+  _attackDistanceThreshold: 4
+  _attackInterval: 2
+  _searchSpeed: 3
+  _searchDurationInSecs: 5
+  _escapeSpeed: 7
+  _escapeDistanceThreshold: 20
+  _waitTimerInSecs: 5
+  _howlRadius: 13.4
+  _layerToHowl:
+    serializedVersion: 2
+    m_Bits: 64
+  _restWaypoint: {fileID: 633330596}
+  _restSpeed: 5
+  _restDurationInSecs: 5
+  _otherNpc:
+  - {fileID: 921291216}
+  _interactPosition: {x: 0, y: 0, z: 0}
+  _interactSpeed: 5
+  _interactDurationInSecs: 5
+  _interactRadius: 10
+  _isTheInteractionStarter: 0
+  _isInInteraction: 0
+  _inspectDurationInSecs: 5
+  _randomStates:
+  - state: Rest
+    weight: 15
+    speed: 5
+  - state: Interact_with_NPC
+    weight: 7
+    speed: 0
+  - state: InspectEquipment
+    weight: 20
+    speed: 4
+  - state: Patrol
+    weight: 80
+    speed: 6
+  _randomStateTransitionDurationInSecs: 10
   _playerLevel: 10
   _playerHP: 100
 --- !u!1 &369844480
@@ -1092,6 +1161,7 @@ GameObject:
   - component: {fileID: 921291220}
   - component: {fileID: 921291219}
   - component: {fileID: 921291218}
+  - component: {fileID: 921291223}
   m_Layer: 6
   m_Name: NPC_Advanced_Aggresive_2
   m_TagString: Untagged
@@ -1121,7 +1191,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 921291216}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 16c853b419b029047b280b2163138075, type: 3}
   m_Name: 
@@ -1142,9 +1212,9 @@ MonoBehaviour:
   _patrolSpeed: 6
   _waypoints:
   - {fileID: 1323140796}
+  - {fileID: 452931498}
   - {fileID: 216405862}
   - {fileID: 303352499}
-  - {fileID: 452931498}
   _targetWaypointIndex: 0
   _timeToConfirmInSecs: 1.5
   _alertSpeed: 5
@@ -1286,6 +1356,75 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 921291216}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &921291223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 921291216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b99957ed7a1740c41b5353a2f2bcd4c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _currentState: 
+  _health: 100
+  _level: 15
+  _viewDistance: 10
+  _currentSpeed: 0
+  _viewAngleInDegrees: 45
+  _player: {fileID: 158328505}
+  _playerLastKnownPosition: {x: 0, y: 0, z: 0}
+  _waypointProximityThreshold: 1.5
+  _patrolSpeed: 6
+  _waypoints:
+  - {fileID: 1671742365}
+  - {fileID: 216405862}
+  - {fileID: 122294073}
+  - {fileID: 303352499}
+  _targetWaypointIndex: 0
+  _timeToConfirmInSecs: 1.5
+  _alertSpeed: 5
+  _chaseSpeed: 8
+  _attackDistanceThreshold: 4
+  _attackInterval: 2
+  _searchSpeed: 3
+  _searchDurationInSecs: 5
+  _escapeSpeed: 7
+  _escapeDistanceThreshold: 20
+  _waitTimerInSecs: 5
+  _howlRadius: 13.4
+  _layerToHowl:
+    serializedVersion: 2
+    m_Bits: 64
+  _restWaypoint: {fileID: 633330596}
+  _restSpeed: 5
+  _restDurationInSecs: 5
+  _otherNpc: []
+  _interactPosition: {x: 0, y: 0, z: 0}
+  _interactSpeed: 5
+  _interactDurationInSecs: 5
+  _interactRadius: 10
+  _isTheInteractionStarter: 0
+  _isInInteraction: 0
+  _inspectDurationInSecs: 5
+  _randomStates:
+  - state: Rest
+    weight: 15
+    speed: 5
+  - state: Interact_with_NPC
+    weight: 7
+    speed: 0
+  - state: InspectEquipment
+    weight: 20
+    speed: 4
+  - state: Patrol
+    weight: 80
+    speed: 6
+  _randomStateTransitionDurationInSecs: 10
+  _playerLevel: 10
+  _playerHP: 100
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -1561,7 +1700,7 @@ GameObject:
   - component: {fileID: 1249074255}
   - component: {fileID: 1249074254}
   - component: {fileID: 1249074253}
-  - component: {fileID: 1249074252}
+  - component: {fileID: 1249074257}
   m_Layer: 6
   m_Name: NPC_Advanced_Aggresive_3
   m_TagString: Untagged
@@ -1584,76 +1723,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 369844481}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1249074252
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1249074250}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16c853b419b029047b280b2163138075, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _currentState: 0
-  _health: 100
-  _level: 15
-  _viewDistance: 10
-  _currentSpeed: 0
-  _viewAngleInDegrees: 45
-  _player: {fileID: 158328505}
-  _playerLastKnownPosition: {x: 0, y: 0, z: 0}
-  _waypointProximityThreshold: 1.5
-  _howlRadius: 13.4
-  _layerToHowl:
-    serializedVersion: 2
-    m_Bits: 64
-  _patrolSpeed: 6
-  _waypoints:
-  - {fileID: 216405862}
-  - {fileID: 303352499}
-  - {fileID: 122294073}
-  - {fileID: 452931498}
-  _targetWaypointIndex: 0
-  _timeToConfirmInSecs: 1.5
-  _alertSpeed: 5
-  _chaseSpeed: 8
-  _attackDistanceThreshold: 4
-  _attackInterval: 2
-  _searchSpeed: 3
-  _searchDurationInSecs: 5
-  _escapeSpeed: 7
-  _escapeDistanceThreshold: 20
-  _waitTimerInSecs: 5
-  _restWaypoint: {fileID: 1798066307}
-  _restSpeed: 5
-  _restDurationInSecs: 5
-  _otherNpc:
-  - {fileID: 1838260325}
-  _interactPosition: {x: 0, y: 0, z: 0}
-  _interactSpeed: 5
-  _interactDurationInSecs: 5
-  _interactRadius: 5
-  _isTheInteractionStarter: 0
-  _isInInteraction: 0
-  _inspectDurationInSecs: 5
-  _randomStates:
-  - state: 7
-    weight: 15
-    speed: 5
-  - state: 9
-    weight: 25
-    speed: 0
-  - state: 8
-    weight: 7
-    speed: 4
-  - state: 0
-    weight: 50
-    speed: 6
-  _randomStateTransitionDurationInSecs: 5
-  _playerLevel: 10
-  _playerHP: 100
 --- !u!54 &1249074253
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1754,6 +1823,75 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1249074250}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1249074257
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1249074250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b99957ed7a1740c41b5353a2f2bcd4c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _currentState: 
+  _health: 100
+  _level: 15
+  _viewDistance: 10
+  _currentSpeed: 0
+  _viewAngleInDegrees: 45
+  _player: {fileID: 158328505}
+  _playerLastKnownPosition: {x: 0, y: 0, z: 0}
+  _waypointProximityThreshold: 1.5
+  _patrolSpeed: 6
+  _waypoints:
+  - {fileID: 122294073}
+  - {fileID: 216405862}
+  - {fileID: 303352499}
+  - {fileID: 1671742365}
+  _targetWaypointIndex: 0
+  _timeToConfirmInSecs: 1.5
+  _alertSpeed: 5
+  _chaseSpeed: 8
+  _attackDistanceThreshold: 4
+  _attackInterval: 2
+  _searchSpeed: 3
+  _searchDurationInSecs: 5
+  _escapeSpeed: 7
+  _escapeDistanceThreshold: 20
+  _waitTimerInSecs: 5
+  _howlRadius: 13.4
+  _layerToHowl:
+    serializedVersion: 2
+    m_Bits: 64
+  _restWaypoint: {fileID: 633330596}
+  _restSpeed: 5
+  _restDurationInSecs: 5
+  _otherNpc: []
+  _interactPosition: {x: 0, y: 0, z: 0}
+  _interactSpeed: 5
+  _interactDurationInSecs: 5
+  _interactRadius: 5
+  _isTheInteractionStarter: 0
+  _isInInteraction: 0
+  _inspectDurationInSecs: 5
+  _randomStates:
+  - state: Rest
+    weight: 15
+    speed: 5
+  - state: Interact_with_NPC
+    weight: 7
+    speed: 0
+  - state: InspectEquipment
+    weight: 20
+    speed: 4
+  - state: Patrol
+    weight: 80
+    speed: 6
+  _randomStateTransitionDurationInSecs: 10
+  _playerLevel: 10
+  _playerHP: 100
 --- !u!1 &1323140795
 GameObject:
   m_ObjectHideFlags: 0
@@ -1860,7 +1998,7 @@ GameObject:
   - component: {fileID: 1802389497}
   - component: {fileID: 1802389496}
   - component: {fileID: 1802389495}
-  - component: {fileID: 1802389494}
+  - component: {fileID: 1802389499}
   m_Layer: 6
   m_Name: NPC_Advanced_Coward_2
   m_TagString: Untagged
@@ -1883,77 +2021,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 219641170}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1802389494
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1802389492}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16c853b419b029047b280b2163138075, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _currentState: 0
-  _health: 100
-  _level: 15
-  _viewDistance: 10
-  _currentSpeed: 0
-  _viewAngleInDegrees: 45
-  _player: {fileID: 158328505}
-  _playerLastKnownPosition: {x: 0, y: 0, z: 0}
-  _waypointProximityThreshold: 1.5
-  _howlRadius: 13.4
-  _layerToHowl:
-    serializedVersion: 2
-    m_Bits: 64
-  _patrolSpeed: 6
-  _waypoints:
-  - {fileID: 122294073}
-  - {fileID: 216405862}
-  - {fileID: 1671742365}
-  - {fileID: 1323140796}
-  _targetWaypointIndex: 0
-  _timeToConfirmInSecs: 1.5
-  _alertSpeed: 5
-  _chaseSpeed: 8
-  _attackDistanceThreshold: 4
-  _attackInterval: 2
-  _searchSpeed: 3
-  _searchDurationInSecs: 5
-  _escapeSpeed: 7
-  _escapeDistanceThreshold: 20
-  _waitTimerInSecs: 5
-  _restWaypoint: {fileID: 1798066307}
-  _restSpeed: 5
-  _restDurationInSecs: 5
-  _otherNpc:
-  - {fileID: 1838260325}
-  - {fileID: 79772249}
-  _interactPosition: {x: 0, y: 0, z: 0}
-  _interactSpeed: 5
-  _interactDurationInSecs: 5
-  _interactRadius: 5
-  _isTheInteractionStarter: 0
-  _isInInteraction: 0
-  _inspectDurationInSecs: 5
-  _randomStates:
-  - state: 7
-    weight: 15
-    speed: 5
-  - state: 9
-    weight: 25
-    speed: 0
-  - state: 8
-    weight: 2
-    speed: 4
-  - state: 0
-    weight: 50
-    speed: 6
-  _randomStateTransitionDurationInSecs: 5
-  _playerLevel: 10
-  _playerHP: 100
 --- !u!54 &1802389495
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2054,6 +2121,75 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1802389492}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1802389499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1802389492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b99957ed7a1740c41b5353a2f2bcd4c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _currentState: 
+  _health: 100
+  _level: 15
+  _viewDistance: 10
+  _currentSpeed: 0
+  _viewAngleInDegrees: 45
+  _player: {fileID: 158328505}
+  _playerLastKnownPosition: {x: 0, y: 0, z: 0}
+  _waypointProximityThreshold: 1.5
+  _patrolSpeed: 6
+  _waypoints:
+  - {fileID: 122294073}
+  - {fileID: 216405862}
+  - {fileID: 303352499}
+  - {fileID: 1671742365}
+  _targetWaypointIndex: 0
+  _timeToConfirmInSecs: 1.5
+  _alertSpeed: 5
+  _chaseSpeed: 8
+  _attackDistanceThreshold: 4
+  _attackInterval: 2
+  _searchSpeed: 3
+  _searchDurationInSecs: 5
+  _escapeSpeed: 7
+  _escapeDistanceThreshold: 20
+  _waitTimerInSecs: 5
+  _howlRadius: 13.4
+  _layerToHowl:
+    serializedVersion: 2
+    m_Bits: 64
+  _restWaypoint: {fileID: 633330596}
+  _restSpeed: 5
+  _restDurationInSecs: 5
+  _otherNpc: []
+  _interactPosition: {x: 0, y: 0, z: 0}
+  _interactSpeed: 5
+  _interactDurationInSecs: 5
+  _interactRadius: 5
+  _isTheInteractionStarter: 0
+  _isInInteraction: 0
+  _inspectDurationInSecs: 5
+  _randomStates:
+  - state: Rest
+    weight: 15
+    speed: 5
+  - state: Interact_with_NPC
+    weight: 7
+    speed: 0
+  - state: InspectEquipment
+    weight: 20
+    speed: 4
+  - state: Patrol
+    weight: 80
+    speed: 6
+  _randomStateTransitionDurationInSecs: 10
+  _playerLevel: 10
+  _playerHP: 100
 --- !u!1 &1838260325
 GameObject:
   m_ObjectHideFlags: 0
@@ -2067,7 +2203,7 @@ GameObject:
   - component: {fileID: 1838260330}
   - component: {fileID: 1838260329}
   - component: {fileID: 1838260328}
-  - component: {fileID: 1838260327}
+  - component: {fileID: 1838260332}
   m_Layer: 6
   m_Name: NPC_Advanced_Coward_1
   m_TagString: Untagged
@@ -2090,77 +2226,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 219641170}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1838260327
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1838260325}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16c853b419b029047b280b2163138075, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _currentState: 0
-  _health: 100
-  _level: 15
-  _viewDistance: 10
-  _currentSpeed: 0
-  _viewAngleInDegrees: 45
-  _player: {fileID: 158328505}
-  _playerLastKnownPosition: {x: 0, y: 0, z: 0}
-  _waypointProximityThreshold: 1.5
-  _howlRadius: 13.4
-  _layerToHowl:
-    serializedVersion: 2
-    m_Bits: 64
-  _patrolSpeed: 6
-  _waypoints:
-  - {fileID: 452931498}
-  - {fileID: 122294073}
-  - {fileID: 1323140796}
-  - {fileID: 216405862}
-  _targetWaypointIndex: 0
-  _timeToConfirmInSecs: 1.5
-  _alertSpeed: 5
-  _chaseSpeed: 8
-  _attackDistanceThreshold: 4
-  _attackInterval: 2
-  _searchSpeed: 3
-  _searchDurationInSecs: 5
-  _escapeSpeed: 7
-  _escapeDistanceThreshold: 20
-  _waitTimerInSecs: 5
-  _restWaypoint: {fileID: 986597561}
-  _restSpeed: 5
-  _restDurationInSecs: 5
-  _otherNpc:
-  - {fileID: 79772249}
-  - {fileID: 1802389492}
-  _interactPosition: {x: 0, y: 0, z: 0}
-  _interactSpeed: 5
-  _interactDurationInSecs: 5
-  _interactRadius: 5
-  _isTheInteractionStarter: 0
-  _isInInteraction: 0
-  _inspectDurationInSecs: 5
-  _randomStates:
-  - state: 7
-    weight: 15
-    speed: 5
-  - state: 9
-    weight: 25
-    speed: 0
-  - state: 8
-    weight: 5
-    speed: 4
-  - state: 0
-    weight: 50
-    speed: 6
-  _randomStateTransitionDurationInSecs: 5
-  _playerLevel: 10
-  _playerHP: 100
 --- !u!54 &1838260328
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2261,6 +2326,75 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1838260325}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1838260332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1838260325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b99957ed7a1740c41b5353a2f2bcd4c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _currentState: 
+  _health: 100
+  _level: 15
+  _viewDistance: 10
+  _currentSpeed: 0
+  _viewAngleInDegrees: 45
+  _player: {fileID: 158328505}
+  _playerLastKnownPosition: {x: 0, y: 0, z: 0}
+  _waypointProximityThreshold: 1.5
+  _patrolSpeed: 6
+  _waypoints:
+  - {fileID: 122294073}
+  - {fileID: 216405862}
+  - {fileID: 303352499}
+  - {fileID: 1671742365}
+  _targetWaypointIndex: 0
+  _timeToConfirmInSecs: 1.5
+  _alertSpeed: 5
+  _chaseSpeed: 8
+  _attackDistanceThreshold: 4
+  _attackInterval: 2
+  _searchSpeed: 3
+  _searchDurationInSecs: 5
+  _escapeSpeed: 7
+  _escapeDistanceThreshold: 20
+  _waitTimerInSecs: 5
+  _howlRadius: 13.4
+  _layerToHowl:
+    serializedVersion: 2
+    m_Bits: 64
+  _restWaypoint: {fileID: 633330596}
+  _restSpeed: 5
+  _restDurationInSecs: 5
+  _otherNpc: []
+  _interactPosition: {x: 0, y: 0, z: 0}
+  _interactSpeed: 5
+  _interactDurationInSecs: 5
+  _interactRadius: 5
+  _isTheInteractionStarter: 0
+  _isInInteraction: 0
+  _inspectDurationInSecs: 5
+  _randomStates:
+  - state: Rest
+    weight: 15
+    speed: 5
+  - state: Interact_with_NPC
+    weight: 7
+    speed: 0
+  - state: InspectEquipment
+    weight: 20
+    speed: 4
+  - state: Patrol
+    weight: 80
+    speed: 6
+  _randomStateTransitionDurationInSecs: 10
+  _playerLevel: 10
+  _playerHP: 100
 --- !u!1 &2143720358
 GameObject:
   m_ObjectHideFlags: 0

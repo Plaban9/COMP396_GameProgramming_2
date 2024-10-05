@@ -172,7 +172,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _currentState: 0
   _health: 100
-  _level: 15
+  _level: 5
   _viewDistance: 10
   _currentSpeed: 0
   _viewAngleInDegrees: 45
@@ -221,7 +221,7 @@ MonoBehaviour:
     weight: 25
     speed: 0
   - state: 8
-    weight: 3
+    weight: 7
     speed: 4
   - state: 0
     weight: 50
@@ -1897,7 +1897,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _currentState: 0
   _health: 100
-  _level: 15
+  _level: 5
   _viewDistance: 10
   _currentSpeed: 0
   _viewAngleInDegrees: 45
@@ -1946,7 +1946,7 @@ MonoBehaviour:
     weight: 25
     speed: 0
   - state: 8
-    weight: 2
+    weight: 7
     speed: 4
   - state: 0
     weight: 50
@@ -2104,7 +2104,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _currentState: 0
   _health: 100
-  _level: 15
+  _level: 5
   _viewDistance: 10
   _currentSpeed: 0
   _viewAngleInDegrees: 45
@@ -2153,7 +2153,7 @@ MonoBehaviour:
     weight: 25
     speed: 0
   - state: 8
-    weight: 5
+    weight: 7
     speed: 4
   - state: 0
     weight: 50
