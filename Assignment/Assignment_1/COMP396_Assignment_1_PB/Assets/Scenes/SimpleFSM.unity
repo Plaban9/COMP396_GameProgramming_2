@@ -847,7 +847,7 @@ MonoBehaviour:
     weight: 25
     speed: 0
   - state: 8
-    weight: 70
+    weight: 15
     speed: 4
   - state: 0
     weight: 50
