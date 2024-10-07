@@ -1,5 +1,3 @@
-using AI.FactoryDesign;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -419,8 +417,9 @@ namespace AI.Simple_FSM
 
             var directionVectorFromEnemyToPlayer = (transform.position - _playerLastKnownPosition).normalized;
             var destination = directionVectorFromEnemyToPlayer.normalized * _escapeDistanceThreshold;
+            var samePlaneDestination = new Vector3(destination.x, 1f, destination.z);
 
-            transform.position = Vector3.MoveTowards(transform.position, destination, _currentSpeed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, samePlaneDestination, _currentSpeed * Time.deltaTime);
         }
         #endregion
 
@@ -517,7 +516,7 @@ namespace AI.Simple_FSM
 
             if (_interactableNpc != null)
             {
-                if (TravelToWaypoint(_interactPosition) && !_isInInteraction)
+                if (!_isInInteraction && TravelToWaypoint(_interactPosition))
                 {
                     if (Vector3.Distance(transform.position, _interactableNpc.transform.position) < _interactRadius * 2 && !_isInInteraction && _isTheInteractionStarter)
                     {
