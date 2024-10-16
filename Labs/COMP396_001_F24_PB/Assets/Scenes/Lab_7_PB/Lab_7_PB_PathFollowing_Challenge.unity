@@ -698,7 +698,7 @@ MonoBehaviour:
   path: {fileID: 1765695634}
   speed: 10
   steeringInertia: 50
-  isLooping: 1
+  isLooping: 0
   waypointRadius: 1
   curPathIndex: 0
   _isGoingForward: 1
