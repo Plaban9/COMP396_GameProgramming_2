@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Lab_7
 {
-
     public class VehicleAvoidance : MonoBehaviour
     {
         public float vehicleRadius = 1.2f;
