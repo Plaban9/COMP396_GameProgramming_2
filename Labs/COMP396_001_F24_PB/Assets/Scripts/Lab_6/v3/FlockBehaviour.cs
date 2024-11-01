@@ -22,6 +22,6 @@ namespace Lab_6.V3
         }
 
         abstract public Vector3 GetForce(); // returns a vector representing the force of this behavior
-        abstract public void Update(Vector3 position); // updates the neighbors array and calculates the force for this behavior
+        abstract public void UpdateBehaviour(Vector3 position); // updates the neighbors array and calculates the force for this behavior
     }
 }

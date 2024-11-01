@@ -31,7 +31,7 @@ namespace Lab_6.V3
             return separationForce;
         }
 
-        public override void Update(Vector3 position)
+        public override void UpdateBehaviour(Vector3 position)
         {
             // Find nearby entities within a certain radius
             float radius = 10f;

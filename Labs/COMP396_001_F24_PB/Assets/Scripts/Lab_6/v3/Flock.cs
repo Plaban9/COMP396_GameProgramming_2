@@ -32,9 +32,9 @@ namespace Lab_6.V3
 
         void FixedUpdate()
         {
-            cohesion.Update(transform.position);
-            separation.Update(transform.position);
-            alignment.Update(transform.position);
+            cohesion.UpdateBehaviour(transform.position);
+            separation.UpdateBehaviour(transform.position);
+            alignment.UpdateBehaviour(transform.position);
 
             // Combine the forces to get a new velocity
             Vector3 newVelocity = cohesion.GetForce() + separation.GetForce() + alignment.GetForce();
