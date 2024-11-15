@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
+using UnityEditor.Experimental.GraphView;
+
 using UnityEngine;
 
 namespace PathFinding.Lab_9
@@ -66,7 +68,7 @@ namespace PathFinding.Lab_9
             return res;
         }
 
-        public List<char> shortest_path_via_AStar_algo(char start, char finish)
+        public OptimalPath shortest_path_via_AStar_algo(char start, char finish)
         {
             List<char> path = null;
             var previous = new Dictionary<char, char>();
@@ -78,18 +80,91 @@ namespace PathFinding.Lab_9
             gScore[start] = 0;
             float hScore = GoalDistanceEstimate(start, finish);
             distances[start] = gScore[start] + hScore;
-            previous[start] = '-';
+            previous[start] = '\0';
             Pending.Add(start);
             //main loop
             while (Pending.Count > 0)
             {
                 Pending.Sort((x, y) => distances[x].CompareTo(distances[y]));
                 var u = Pending[0];
-                // TODO
-                // ...
-                // ...
+
+                Pending.RemoveAt(0);
+
+
+                if (u == finish)
+                {
+                    path = new List<char>();
+                    while (previous[u] != '\0')
+                    {
+                        path.Add(u);
+                        u = previous[u];
+                    }
+                    path.Add(start);
+                    //path.Reverse();
+                    break;
+                }
+
+                Closed.Add(u);
+                // Check each successor of node 'u'
+                foreach (var neighbor in GetNeighbors(u))
+                {
+
+                    float tentative_gScore = gScore[u] + Cost(u, neighbor);
+
+                    if ((Closed.Contains(neighbor) || Pending.Contains(neighbor)) && gScore[neighbor] <= tentative_gScore)
+                        continue;
+
+                    previous[neighbor] = u;
+                    gScore[neighbor] = tentative_gScore;
+                    hScore = GoalDistanceEstimate(neighbor, finish);
+                    distances[neighbor] = gScore[neighbor] + hScore;
+
+                    if (!Pending.Contains(neighbor))
+                        Pending.Add(neighbor);
+                }
             }
-            return path;
+
+            if (strategy == HeuristicStrategy.DictionaryDistance)
+            {
+                distances[finish] = distances[finish] - GoalDistanceEstimate(finish, start);
+            }
+
+            var optimalPath = ConstructOptimalPathForAStar(distances, previous, start, finish);
+            return optimalPath;
+            //return path;
+        }
+
+        private List<char> GetNeighbors(char node)
+        {
+            var neighbours = vertices[node];
+            var t = new List<char>();
+
+            foreach (var neighbour in neighbours)
+            {
+                t.Add(neighbour.Key);
+            }
+
+            return t;
+        }
+
+        private float Cost(char fromNode, char toNode)
+        {
+            float res = 0f;
+            switch (strategy)
+            {
+                case HeuristicStrategy.EuclideanDistance:
+                    res = EuclideanDistance(verticesData[fromNode], verticesData[toNode]);
+                    break;
+                case HeuristicStrategy.ManhattanDistance:
+                    res = ManhatanDistance(verticesData[fromNode], verticesData[toNode]);
+                    break;
+                case HeuristicStrategy.DictionaryDistance:
+                    res = vertices[fromNode][toNode];
+                    break;
+                default:
+                    break;
+            }
+            return res;
         }
 
         public OptimalPath shortest_path_via_Dijkstra(char start, char finish)
@@ -153,17 +228,64 @@ namespace PathFinding.Lab_9
 
             return new OptimalPath(pathList, optimalDistance);
         }
+
+        OptimalPath ConstructOptimalPath(Dictionary<char, float> distances, Dictionary<char, char> previous, char start, char finish)
+        {
+            var optimalDistance = distances[finish];
+
+            var pathList = new List<char>();
+
+            var currentNode = finish;
+
+            while (currentNode != '\0')
+            {
+                pathList.Add(currentNode);
+                var tempNode = previous[currentNode];
+                currentNode = tempNode;
+            }
+
+            pathList.Reverse();
+
+            return new OptimalPath(pathList, optimalDistance);
+        }
+
+        OptimalPath ConstructOptimalPathForAStar(Dictionary<char, float> distances, Dictionary<char, char> previous, char start, char finish)
+        {
+            var optimalDistance = distances[finish];
+
+            var pathList = new List<char>();
+
+            var currentNode = finish;
+
+            while (currentNode != '\0')
+            {
+                pathList.Add(currentNode);
+                var tempNode = previous[currentNode];
+                currentNode = tempNode;
+            }
+
+            pathList.Reverse();
+
+            return new OptimalPath(pathList, optimalDistance);
+        }
     }
 
     public class OptimalPath
     {
         private readonly List<char> path;
         private readonly int length;
+        private readonly float lengthF;
 
         public OptimalPath(List<char> path, int length)
         {
             this.path = path;
             this.length = length;
+        }
+
+        public OptimalPath(List<char> path, float lengthF)
+        {
+            this.path = path;
+            this.lengthF = lengthF;
         }
 
         public List<char> GetPath()
@@ -174,6 +296,28 @@ namespace PathFinding.Lab_9
         public int GetLength()
         {
             return length;
+        }
+
+        public float GetLengthF()
+        {
+            return lengthF;
+        }
+
+        public string GetVisualizedPath()
+        {
+            var pathVisualizer = "";
+
+            for (var i = 0; i < path.Count; i++)
+            {
+                pathVisualizer += path[i].ToString();
+
+                if (i < path.Count - 1)
+                {
+                    pathVisualizer += " -> ";
+                }
+            }
+
+            return pathVisualizer;
         }
     }
 }
