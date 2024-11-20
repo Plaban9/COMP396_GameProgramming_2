@@ -36,6 +36,10 @@ namespace Lab_10
         public float obstacleEpsilon = 0.2f;
         public bool showGrid = true;
         public bool showObstacleBlocks = true;
+        public GameObject _floorPrefab = null;
+        public Vector3 _floorSizeAtUnitScale = new Vector3(10f, 1f, 10f);
+
+        [SerializeField] private Vector3 _initialFloorPosition = Vector3.zero;
 
         public Node[,] nodes
         {
@@ -45,6 +49,11 @@ namespace Lab_10
         {
             get
             {
+                if (_floorPrefab != null)
+                {
+                    return _initialFloorPosition;
+                }
+
                 return transform.position;
             }
         }
@@ -58,7 +67,28 @@ namespace Lab_10
 
         void Awake()
         {
+            CalculatGridBasedOnFloor();
+
             ComputeGrid();
+        }
+
+        private void CalculatGridBasedOnFloor()
+        {
+            if (_floorPrefab != null)
+            {
+                var _floorPrefabPosition = _floorPrefab.transform.position;
+                var _floorScale = _floorPrefab.transform.localScale;
+
+                var _initialPositionX = _floorPrefabPosition.x - (_floorSizeAtUnitScale.x * _floorScale.x / 2f);
+                //var _initialPositionY = _floorPrefabPosition.y + (_floorSizeAtUnitScale.y * _floorScale.y / 2f);
+                var _initialPositionY = _floorPrefabPosition.y + 0.5f;
+                var _initialPositionZ = _floorPrefabPosition.z - (_floorSizeAtUnitScale.z * _floorScale.z / 2f);
+
+                // ASSUMED SQUARE PLANE or Similar Ratio
+                gridCellSize = (_floorScale.x * _floorSizeAtUnitScale.x) / numOfRows;
+
+                _initialFloorPosition = new Vector3(_initialPositionX, _initialPositionY, _initialPositionZ);
+            }
         }
 
         void ComputeGrid()
@@ -151,6 +181,7 @@ namespace Lab_10
         {
             if (showGrid)
             {
+                CalculatGridBasedOnFloor();
                 DebugDrawGrid(Color.blue);
             }
             //Grid Start Position

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Lab_10
 {
-    public class Node : MonoBehaviour
+    public class Node
     {
         public float costSoFar;
         public float fScore;
@@ -33,9 +33,7 @@ namespace Lab_10
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(position);
-
-
+            return HashCode.Combine(position);  
         }
     }
 }

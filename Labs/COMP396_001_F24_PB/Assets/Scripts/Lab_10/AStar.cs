@@ -11,7 +11,7 @@ using static UnityEngine.UIElements.UxmlAttributeDescription;
 namespace Lab_10
 {
 
-    public class AStar : MonoBehaviour
+    public class AStar
     {
         private float HeuristicEstimateCost(Node curNode, Node goalNode)
         {

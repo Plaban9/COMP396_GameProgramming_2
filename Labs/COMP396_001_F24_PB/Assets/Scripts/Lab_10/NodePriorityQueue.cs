@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Lab_10
 {
-    public class NodePriorityQueue : MonoBehaviour
+    public class NodePriorityQueue
     {
         private readonly List<Node> nodes = new();
 

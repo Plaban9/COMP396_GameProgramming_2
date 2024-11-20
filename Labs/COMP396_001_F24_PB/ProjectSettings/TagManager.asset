@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - NPC
+  - Floor
+  - Start
+  - End
+  - Obstacle
   layers:
   - Default
   - TransparentFX
