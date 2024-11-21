@@ -67,12 +67,12 @@ namespace Lab_10
 
         void Awake()
         {
-            CalculatGridBasedOnFloor();
+            CalculateGridBasedOnFloor();
 
             ComputeGrid();
         }
 
-        private void CalculatGridBasedOnFloor()
+        private void CalculateGridBasedOnFloor()
         {
             if (_floorPrefab != null)
             {
@@ -181,7 +181,7 @@ namespace Lab_10
         {
             if (showGrid)
             {
-                CalculatGridBasedOnFloor();
+                CalculateGridBasedOnFloor();
                 DebugDrawGrid(Color.blue);
             }
             //Grid Start Position

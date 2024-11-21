@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 using UnityEngine;
 
@@ -65,6 +66,8 @@ namespace Lab_10
                     if (index < pathArray.Count)
                     {
                         Node nextNode = pathArray[index];
+                        Gizmos.color = Color.cyan;
+                        Gizmos.DrawCube(node.position, GridManager.instance.gridCellSize * Vector3.one);
                         Debug.DrawLine(node.position, nextNode.position, Color.green);
                         index++;
                     }
